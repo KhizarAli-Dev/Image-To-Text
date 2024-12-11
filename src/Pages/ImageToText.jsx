@@ -8,20 +8,21 @@ const ImageToText = () => {
   const [progress, setProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // Handle file input
+  // Handle file input and trigger text conversion automatically
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
       setPreviewUrl(URL.createObjectURL(file));
-      setText("");
-      setProgress(0);
+      setText(""); // Clear previous text
+      setProgress(0); // Reset progress
+      convertImageToText(file); // Automatically convert image to text
     }
   };
 
   // Process image using Tesseract.js
-  const convertImageToText = () => {
-    if (!image) {
+  const convertImageToText = (file) => {
+    if (!file) {
       toast.error("Please upload an image.");
       return;
     }
@@ -37,17 +38,18 @@ const ImageToText = () => {
       })
         .then(({ data: { text } }) => {
           setText(text);
+          copyTextToClipboard(text); // Copy the text automatically
         })
         .catch((error) => {
           console.error("Error:", error);
           setText("Failed to extract text.");
         });
     };
-    reader.readAsDataURL(image);
+    reader.readAsDataURL(file);
   };
 
   // Copy extracted text to clipboard
-  const copyTextToClipboard = () => {
+  const copyTextToClipboard = (text) => {
     if (text) {
       navigator.clipboard
         .writeText(text)
@@ -87,17 +89,6 @@ const ImageToText = () => {
               className="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
             />
           </div>
-          <button
-            onClick={convertImageToText}
-            
-            className={`w-full py-2 px-4 rounded-lg text-white font-bold ${
-              image
-                ? "bg-blue-500 hover:bg-blue-600"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            {image ? "Convert to Text" : "Upload an Image"}
-          </button>
           {progress > 0 && (
             <div className="mt-4">
               <p className="text-center text-gray-600">
@@ -117,12 +108,6 @@ const ImageToText = () => {
                 Extracted Text:
               </h3>
               <p className="text-gray-600 whitespace-pre-wrap">{text}</p>
-              <button
-                onClick={copyTextToClipboard}
-                className="mt-4 py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg"
-              >
-                Copy Text
-              </button>
             </div>
           )}
         </div>
