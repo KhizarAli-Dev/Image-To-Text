@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import Tesseract from "tesseract.js";
+import "react-toastify/dist/ReactToastify.css";
 
 const ImageToText = () => {
   const [image, setImage] = useState(null);
@@ -43,6 +45,16 @@ const ImageToText = () => {
         });
     };
     reader.readAsDataURL(image);
+  };
+
+  // Copy extracted text to clipboard
+  const copyTextToClipboard = () => {
+    if (text) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => toast.success("Text copied to clipboard!"))
+        .catch((error) => console.error("Failed to copy text:", error));
+    }
   };
 
   return (
@@ -94,7 +106,7 @@ const ImageToText = () => {
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
                 <div
-                  className="bg-blue-500 h-2.5 rounded-full"
+                  className="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
@@ -106,10 +118,17 @@ const ImageToText = () => {
                 Extracted Text:
               </h3>
               <p className="text-gray-600 whitespace-pre-wrap">{text}</p>
+              <button
+                onClick={copyTextToClipboard}
+                className="mt-4 py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg"
+              >
+                Copy Text
+              </button>
             </div>
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
