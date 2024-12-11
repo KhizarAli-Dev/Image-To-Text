@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import toast, { Toaster } from "react-hot-toast";
 import Tesseract from "tesseract.js";
-import "react-toastify/dist/ReactToastify.css";
 
 const ImageToText = () => {
   const [image, setImage] = useState(null);
@@ -23,7 +22,7 @@ const ImageToText = () => {
   // Process image using Tesseract.js
   const convertImageToText = () => {
     if (!image) {
-      alert("Please upload an image.");
+      toast.error("Please upload an image.");
       return;
     }
 
@@ -90,7 +89,7 @@ const ImageToText = () => {
           </div>
           <button
             onClick={convertImageToText}
-            disabled={!image}
+            
             className={`w-full py-2 px-4 rounded-lg text-white font-bold ${
               image
                 ? "bg-blue-500 hover:bg-blue-600"
@@ -128,7 +127,7 @@ const ImageToText = () => {
           )}
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
     </div>
   );
 };
